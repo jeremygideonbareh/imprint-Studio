@@ -9,7 +9,7 @@ import Sessions from './components/Sessions';
 import Beyond from './components/Beyond';
 import Contact from './components/Contact';
 import Chrome from './components/Chrome';
-import { ScrollTrigger, getLenis, startSmoothScroll } from './lib/motion';
+import { ScrollTrigger, getLenis, scrollToAnchor, startSmoothScroll, warmLazyImages } from './lib/motion';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -28,8 +28,20 @@ export default function App() {
     if (!loading) {
       getLenis()?.start();
       document.fonts.ready.then(() => ScrollTrigger.refresh());
+      warmLazyImages();
     }
   }, [loading]);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as Element).closest?.('a[href^="#"]');
+      if (!link) return;
+      e.preventDefault();
+      scrollToAnchor(link.getAttribute('href')!);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   const done = useCallback(() => setLoading(false), []);
 

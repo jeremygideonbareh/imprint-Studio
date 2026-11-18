@@ -100,7 +100,7 @@ export default function Tunnel() {
   );
 
   return (
-    <section ref={root} id="gallery" className="relative h-[100dvh] overflow-hidden bg-ink text-ivory">
+    <section ref={root} id="gallery" className="relative h-[100svh] overflow-hidden bg-ink text-ivory">
       <div className="tunnel-glow pointer-events-none absolute inset-0" />
       <div className="absolute inset-0" style={{ perspective: '900px', perspectiveOrigin: '50% 50%' }}>
         <div className="absolute left-1/2 top-1/2 h-0 w-0" style={{ transformStyle: 'preserve-3d' }}>
@@ -111,10 +111,10 @@ export default function Tunnel() {
                 key={id}
                 data-t-item
                 className={`absolute left-0 top-0 overflow-hidden will-change-transform ${
-                  isLast ? 'h-[64dvh] w-[46dvh]' : 'h-[34dvh] w-[25dvh] sm:h-[40dvh] sm:w-[30dvh]'
+                  isLast ? 'h-[64svh] w-[46svh] sm:h-[26.25vw] sm:w-[42vw]' : 'h-[34svh] w-[25svh] sm:h-[40svh] sm:w-[30svh]'
                 }`}
               >
-                <img src={isLast ? img(id) : thumb(id)} alt="" className="h-full w-full object-cover" loading="eager" decoding="async" />
+                <img src={isLast ? img(id) : thumb(id)} alt="" className={`h-full w-full object-cover ${isLast ? 'object-[50%_30%]' : ''}`} loading="lazy" decoding="async" />
                 <div data-t-shade className="absolute inset-0 bg-ink" />
               </div>
             );

@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { curtain, gsap, useGSAP, getLenis, motionOff, setMotion } from '../lib/motion';
+import { curtain, gsap, useGSAP, motionOff, scrollToY, setMotion } from '../lib/motion';
 import { BOOTH, HERO_IMAGE, IG, IG_DM, PHONE, PHONE_LABEL, YOUTUBE, img } from '../data/content';
 import SplitChars from './SplitChars';
 
@@ -36,8 +36,8 @@ export default function Contact() {
   });
 
   return (
-    <section ref={root} id="contact" className="relative flex min-h-[100dvh] flex-col justify-between overflow-hidden bg-ink px-6 pb-8 pt-44 text-ivory sm:px-10">
-      <img data-bgimg src={img(HERO_IMAGE)} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[50%_58%] opacity-0" />
+    <section ref={root} id="contact" className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ink px-6 pb-8 pt-44 text-ivory sm:px-10">
+      <img data-bgimg src={img(HERO_IMAGE)} alt="" loading="lazy" className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[50%_58%] opacity-0" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/90" />
 
       <div className="relative">
@@ -51,65 +51,66 @@ export default function Contact() {
           </span>
         </h2>
 
-        <div className="mt-14 flex flex-wrap items-center gap-10">
+        <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <a
             href={PHONE}
             onPointerMove={onMagnet}
             onPointerLeave={onMagnetLeave}
-            className="group relative inline-flex h-40 w-40 items-center justify-center rounded-full border border-ivory/40 text-center text-sm uppercase tracking-[0.18em] sm:h-48 sm:w-48"
+            className="inline-flex min-h-14 items-center justify-center rounded-full bg-brass px-8 text-sm text-ink transition-colors duration-300 hover:bg-ivory"
           >
-            <span className="absolute inset-0 scale-0 rounded-full bg-brass transition-transform duration-500 ease-out group-hover:scale-100" />
-            <span className="relative transition-colors duration-500 group-hover:text-ink">
-              Call
-              <br />
-              Imprint ↗
-            </span>
+            Call {PHONE_LABEL}
           </a>
-          <p className="max-w-sm text-sm leading-relaxed text-ivory/70">
-            Weddings, engagements, receptions, films and photobooth, in Shillong. Call or message the studio with your date.
-          </p>
+          <a
+            href={IG_DM}
+            target="_blank"
+            rel="noreferrer"
+            onPointerMove={onMagnet}
+            onPointerLeave={onMagnetLeave}
+            className="inline-flex min-h-14 items-center justify-center rounded-full bg-ivory px-8 text-sm text-ink transition-colors duration-300 hover:bg-brass"
+          >
+            Message on Instagram ↗
+          </a>
         </div>
+        <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/70">
+          Weddings, engagements, receptions, films and photobooth, in Shillong. Tell the studio your date and venue.
+        </p>
       </div>
 
       <footer data-foot className="relative mt-24 grid gap-8 border-t border-ivory/15 pt-8 text-sm sm:grid-cols-4">
         <div>
           <p className="text-ivory/50">Studio</p>
           <p className="mt-2">Imprint Studio, Shillong</p>
-          <a href={PHONE} className="block hover:text-brass">
+          <a href={PHONE} className="block py-2 hover:text-brass sm:py-0">
             {PHONE_LABEL}
           </a>
         </div>
         <div>
           <p className="text-ivory/50">Follow</p>
-          <a href={IG} target="_blank" rel="noreferrer" className="mt-2 block hover:text-brass">
+          <a href={IG} target="_blank" rel="noreferrer" className="mt-1 block py-2 hover:text-brass sm:mt-2 sm:py-0">
             Instagram ↗
           </a>
-          <a href={IG_DM} target="_blank" rel="noreferrer" className="block hover:text-brass">
+          <a href={IG_DM} target="_blank" rel="noreferrer" className="block py-2 hover:text-brass sm:py-0">
             Send a message ↗
           </a>
         </div>
         <div>
           <p className="text-ivory/50">More</p>
-          <a href={BOOTH} target="_blank" rel="noreferrer" className="mt-2 block hover:text-brass">
+          <a href={BOOTH} target="_blank" rel="noreferrer" className="mt-1 block py-2 hover:text-brass sm:mt-2 sm:py-0">
             Imprint Booth ↗
           </a>
-          <a href={YOUTUBE} target="_blank" rel="noreferrer" className="block hover:text-brass">
+          <a href={YOUTUBE} target="_blank" rel="noreferrer" className="block py-2 hover:text-brass sm:py-0">
             YouTube ↗
           </a>
         </div>
         <div className="flex items-end justify-between sm:flex-col sm:items-end">
-          <button type="button" onClick={() => {
-              const lenis = getLenis();
-              if (lenis) lenis.scrollTo(0, { duration: 2.4 });
-              else window.scrollTo({ top: 0, behavior: 'smooth' });
-            }} className="hover:text-brass" data-cursor="Top">
+          <button type="button" onClick={() => scrollToY(0)} className="py-2 hover:text-brass sm:py-0" data-cursor="Top">
             Back to the beginning ↑
           </button>
-          <button type="button" onClick={() => setMotion(motionOff())} className="text-ivory/50 hover:text-brass">
+          <button type="button" onClick={() => setMotion(motionOff())} className="py-2 text-ivory/60 hover:text-brass sm:py-0">
             Motion: {motionOff() ? 'Off' : 'On'}
           </button>
         </div>
-        <p className="text-xs leading-relaxed text-ivory/45 sm:col-span-4">
+        <p className="text-xs leading-relaxed text-ivory/60 sm:col-span-4">
           Design concept for Imprint Studio, not yet the official site. Photographs and captions from @imprint_studio_shillong and collaborating albums by @lifetouch_photography_shillong, used for preview only.
         </p>
       </footer>

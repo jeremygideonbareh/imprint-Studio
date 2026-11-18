@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '../lib/motion';
-import { IG_DM } from '../data/content';
+import { IG_DM, PHONE } from '../data/content';
 
 const SCENES = [
   { id: 'stories', label: 'Stories' },
@@ -17,6 +17,7 @@ export default function Chrome() {
   const bar = useRef<HTMLDivElement>(null);
   const cursor = useRef<HTMLDivElement>(null);
   const [scene, setScene] = useState('Opening');
+  const [light, setLight] = useState(false);
   const [label, setLabel] = useState('');
   const [mode, setMode] = useState<'dot' | 'ring' | 'label'>('dot');
 
@@ -39,6 +40,9 @@ export default function Chrome() {
         if (box && box.top <= mid && box.bottom > mid) current = s.label;
       });
       setScene(current);
+      // the bar reads against whatever sits under it: ink type over the ivory services sheet
+      const sheet = document.getElementById('sessions')?.getBoundingClientRect();
+      setLight(!!sheet && sheet.top <= 36 && sheet.bottom > 36);
     };
     ScrollTrigger.create({
       start: 0,
@@ -114,19 +118,23 @@ export default function Chrome() {
         <span className={label ? 'opacity-100' : 'opacity-0'}>{label}</span>
       </div>
 
-      <div ref={bar} className="fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-6 py-4 text-ivory mix-blend-difference sm:px-10">
+      <div ref={bar} className={`fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-6 py-4 transition-colors duration-300 sm:px-10 ${light ? 'text-ink' : 'text-ivory'}`}>
+        <div className={`pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 bg-gradient-to-b from-ink/80 to-transparent transition-opacity duration-300 ${light ? 'opacity-0' : ''}`} aria-hidden="true" />
         <a href="#top" className="font-poem text-xl italic tracking-wide">
           Imprint
         </a>
         <p className="hidden items-center gap-3 text-xs uppercase tracking-[0.2em] sm:flex">
           <span className="rec-dot inline-block h-1.5 w-1.5 rounded-full bg-brass" />
           <span>{scene}</span>
-          <span data-timecode className="tabular-nums text-ivory/60">
+          <span data-timecode className="tabular-nums opacity-60">
             00:00:00
           </span>
         </p>
-        <a href={IG_DM} target="_blank" rel="noreferrer" className="text-sm hover:opacity-60">
-          Check your date ↗
+        <a href={IG_DM} target="_blank" rel="noreferrer" className="hidden text-sm hover:opacity-60 sm:inline">
+          Message on Instagram ↗
+        </a>
+        <a href={PHONE} className="py-1 text-sm hover:opacity-60 sm:hidden">
+          Call the studio
         </a>
       </div>
     </>

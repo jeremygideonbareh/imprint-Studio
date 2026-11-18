@@ -14,12 +14,19 @@ export default function Beyond() {
 
       curtain(root.current, 'top top');
 
+      // the title sets while the sheet rises, so the section is never an empty colour field
+      gsap.fromTo(
+        q('[data-s-title] .mask > span'),
+        { yPercent: 150 },
+        { yPercent: 0, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: root.current, start: 'top 75%', end: 'top 15%', scrub: true } },
+      );
+
       mm.add({ wide: '(min-width: 1100px)', mid: '(min-width: 640px) and (max-width: 1099px)', narrow: '(max-width: 639px)' }, (ctx) => {
         const { wide, mid } = ctx.conditions ?? {};
         const fanned = wide || mid;
         const spread = fanned ? 30 : 0;
         // distance between fanned frames, in frame widths, sized so the outer frames stay on screen
-        const step = wide ? 1.05 : 0.82;
+        const step = wide ? 1.12 : 0.9;
         const tl = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: { trigger: root.current, start: 'top top', end: '+=180%', pin: true, scrub: 1 },
@@ -35,17 +42,16 @@ export default function Beyond() {
             frames,
             {
               xPercent: (i) => -50 + (i - 1) * (fanned ? step * 100 : 0),
-              yPercent: (i) => -50 + (fanned ? 0 : (i - 1) * 55),
+              yPercent: (i) => -50 + (fanned ? 0 : (i - 1) * 124),
               rotateY: (i) => (i - 1) * -spread,
               rotateZ: 0,
               z: (i) => (!fanned ? 0 : i === 1 ? 120 : -60),
-              scale: wide ? 1 : mid ? 0.8 : 0.5,
+              scale: mid ? 0.8 : 1,
               duration: 0.4,
               ease: 'power2.inOut',
             },
             0.45,
           )
-          .fromTo(q('[data-s-title] .mask > span'), { yPercent: 150 }, { yPercent: 0, stagger: 0.05, duration: 0.2, ease: 'power3.out' }, 0)
           .fromTo(q('[data-s-label]'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, stagger: 0.05, duration: 0.15 }, 0.8);
       });
 
@@ -55,7 +61,7 @@ export default function Beyond() {
   );
 
   return (
-    <section ref={root} id="beyond" className="relative h-[100dvh] overflow-hidden bg-oxblood text-ivory">
+    <section ref={root} id="beyond" className="relative h-[100svh] overflow-hidden bg-oxblood text-ivory">
       <div className="absolute inset-x-6 top-20 z-10 flex justify-between text-xs uppercase tracking-[0.2em] sm:inset-x-10">
         <span>(07) — Beyond the album</span>
         <a href={BOOTH} target="_blank" rel="noreferrer" className="hidden hover:text-brass sm:inline" data-cursor="Visit">
@@ -63,7 +69,7 @@ export default function Beyond() {
         </a>
       </div>
 
-      <h2 data-s-title className="absolute inset-x-6 top-[14dvh] z-0 text-[13vw] leading-[0.88] tracking-tight sm:inset-x-10 sm:text-[7.5vw]">
+      <h2 data-s-title className="absolute inset-x-6 top-[14svh] z-0 text-[13vw] leading-[0.88] tracking-tight sm:inset-x-10 sm:text-[min(7.5vw,13svh)]">
         <span className="mask block">
           <span className="inline-block">More ways</span>
         </span>
@@ -72,7 +78,7 @@ export default function Beyond() {
         </span>
       </h2>
 
-      <div className="absolute inset-0 top-[22dvh]" style={{ perspective: '1400px' }}>
+      <div className="absolute inset-0 top-[22svh] sm:top-[28svh]" style={{ perspective: '1400px' }}>
         {BEYOND_FRAMES.map((f) => (
           <a
             key={f.label}
@@ -81,11 +87,11 @@ export default function Beyond() {
             rel="noreferrer"
             data-frame
             data-cursor="Open"
-            className="absolute left-1/2 top-1/2 block h-[42dvh] w-[30dvh] sm:h-[50dvh] sm:w-[35dvh]"
+            className="absolute left-1/2 top-1/2 block h-[20svh] w-[14.5svh] sm:h-[50svh] sm:w-[35svh]"
             style={{ transformStyle: 'preserve-3d' }}
           >
             <span className="block h-full w-full overflow-hidden">
-              <img src={thumb(f.image)} alt={f.label} className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+              <img src={thumb(f.image)} alt={f.label} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
             </span>
             <span data-s-label className="absolute -bottom-9 left-0 flex w-full justify-between text-sm">
               <span>{f.label}</span>

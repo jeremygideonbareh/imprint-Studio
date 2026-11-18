@@ -30,7 +30,7 @@ export type Chapter = {
 
 export const CHAPTERS: Chapter[] = [
   {
-    title: 'Blessed couples',
+    title: 'Garden lights',
     date: 'November 2026',
     likes: '893',
     line: 'The Blessed Couples.',
@@ -38,7 +38,7 @@ export const CHAPTERS: Chapter[] = [
     href: 'https://www.instagram.com/imprint_studio_shillong/p/DfUuqwnkxxq/',
   },
   {
-    title: 'The beginning',
+    title: 'On the terrace',
     date: 'November 2026',
     likes: '1,755',
     line: 'The beginning of their forever.',
@@ -46,7 +46,7 @@ export const CHAPTERS: Chapter[] = [
     href: 'https://www.instagram.com/lifetouch_photography_shillong/p/DfXBwYwExEQ/',
   },
   {
-    title: 'The frame',
+    title: 'The long aisle',
     date: 'November 2026',
     likes: '696',
     line: 'Where love became the most beautiful frame.',
@@ -62,7 +62,7 @@ export const CHAPTERS: Chapter[] = [
     href: 'https://www.instagram.com/lifetouch_photography_shillong/p/DfpiZ5Kk8FD/',
   },
   {
-    title: 'The promise',
+    title: 'The veil',
     date: 'October 2026',
     likes: '2,126',
     line: 'The world witnessed their vows, but heaven knows the weight of their promise.',
@@ -70,7 +70,7 @@ export const CHAPTERS: Chapter[] = [
     href: 'https://www.instagram.com/lifetouch_photography_shillong/p/DfEY9CvoFW4/',
   },
   {
-    title: 'At the centre',
+    title: 'The red church',
     date: 'October 2026',
     likes: '1,477',
     line: 'Christ at the center — this is their forever.',
@@ -78,7 +78,7 @@ export const CHAPTERS: Chapter[] = [
     href: 'https://www.instagram.com/lifetouch_photography_shillong/p/DeMGySYIBHS/',
   },
   {
-    title: 'Love and laughter',
+    title: 'Into the mist',
     date: 'May 2026',
     likes: '1,684',
     line: 'A perfect wedding vibe filled with love and laughter.',
@@ -88,8 +88,8 @@ export const CHAPTERS: Chapter[] = [
 ];
 
 export const TUNNEL = [
-  'p04_12', 'p07_15', 'p05_09', 'p12_13', 'p06_08', 'p02_07', 'p07_11', 'p05_11', 'p12_05', 'p06_13',
-  'p04_06', 'p07_08', 'p12_14', 'p06_05', 'p05_07', 'p06_14', 'p12_07', 'p06_16', 'p06_11', 'p19_16',
+  'p04_12', 'p07_15', 'p12_13', 'p06_08', 'p02_07', 'p05_11', 'p12_05', 'p06_13',
+  'p04_06', 'p12_14', 'p05_07', 'p06_14', 'p12_07', 'p06_16', 'p06_11', 'p19_16',
 ];
 
 export const TUNNEL_LINES = ['Every vow', 'every glance', 'every quiet hand', 'pressed to keep'];
@@ -107,7 +107,6 @@ export const QUIET_POEM = [
 export const STATS = [
   { value: 15, suffix: 'K', decimals: 0, label: 'People following the studio' },
   { value: 2.1, suffix: 'K', decimals: 1, label: 'Hearts on a single wedding album' },
-  { value: 9, suffix: '', decimals: 0, label: 'Albums gathered in this preview' },
 ];
 
 export const SESSIONS = [

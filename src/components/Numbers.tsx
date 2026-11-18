@@ -42,7 +42,7 @@ export default function Numbers() {
         const obj = { v: 0 };
         // counts are tied to the scrollbar: scroll back and the numbers run back down
         gsap
-          .timeline({ scrollTrigger: { trigger: node, start: 'top 92%', end: 'top 38%', scrub: 1 } })
+          .timeline({ scrollTrigger: { trigger: node, start: 'top 95%', end: 'top 60%', scrub: 1 } })
           .fromTo(node, { yPercent: 60 + i * 25, rotateX: -65, autoAlpha: 0 }, { yPercent: 0, rotateX: 0, autoAlpha: 1, ease: 'power2.out', duration: 0.5 })
           .to(obj, { v: target, ease: 'power1.out', duration: 1, onUpdate: () => { out.textContent = obj.v.toFixed(decimals); } }, 0)
           .fromTo(node.querySelector('[data-rule]'), { scaleX: 0 }, { scaleX: 1, ease: 'none', duration: 0.8 }, 0.1);
@@ -89,7 +89,7 @@ export default function Numbers() {
     <section ref={root} id="numbers" className="relative overflow-hidden bg-oxblood py-28 text-ivory sm:py-40">
       <div className="px-6 sm:px-10">
         <p className="text-xs uppercase tracking-[0.2em]">(05) — In numbers</p>
-        <div className="mt-14 grid gap-14 sm:grid-cols-3 sm:gap-10" style={{ perspective: '800px' }}>
+        <div className="mt-14 grid gap-14 sm:grid-cols-2 sm:gap-10" style={{ perspective: '800px' }}>
           {STATS.map((s) => (
             <div key={s.label} data-stat data-value={s.value} data-decimals={s.decimals}>
               <p className="text-[22vw] leading-none tracking-tight tabular-nums sm:text-[9vw]">

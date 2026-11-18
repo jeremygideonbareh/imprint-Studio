@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, ScrollTrigger, useGSAP, scrollVelocity } from '../lib/motion';
+import { gsap, ScrollTrigger, useGSAP, scrollToY, scrollVelocity } from '../lib/motion';
 import { CHAPTERS, HERO_IMAGE, img, thumb } from '../data/content';
 import SplitChars from './SplitChars';
 
@@ -24,8 +24,9 @@ export default function Stories() {
       const track = q('[data-track]')[0] as HTMLElement;
       const distance = () => track.scrollWidth - window.innerWidth;
 
-      // The section overlaps the hero pin's last screen (-mt-[100dvh]); stay invisible while it slides
+      // The section overlaps the hero pin's last screen (-mt-[100svh]); stay transparent while it slides
       // underneath, then appear exactly when it locks — on top of the matching hero frame.
+      // Opacity rather than visibility, so the chapter links stay in the tab order.
       const handoff = q('[data-handoff]')[0] as HTMLElement;
       const alignHandoff = () => {
         gsap.set(handoff.querySelector('img'), { left: -handoff.offsetLeft, top: -handoff.offsetTop, transformOrigin: `${handoff.offsetLeft + handoff.offsetWidth / 2}px ${handoff.offsetTop + handoff.offsetHeight / 2}px` });
@@ -33,43 +34,63 @@ export default function Stories() {
       alignHandoff();
       ScrollTrigger.addEventListener('refreshInit', alignHandoff);
 
-      gsap.set(root.current, { autoAlpha: 0 });
+      const setShown = (shown: boolean) => gsap.set(root.current, { opacity: shown ? 1 : 0, pointerEvents: shown ? 'auto' : 'none' });
+      setShown(false);
 
+      // The reel holds still for the opening headline, then rolls
+      const pause = () => innerHeight * 0.6;
+      const pinned = ScrollTrigger.create({
+        trigger: root.current,
+        start: 'top top',
+        end: () => `+=${pause() + distance()}`,
+        pin: true,
+        invalidateOnRefresh: true,
+        // visibility rides the pin itself so it flips on the exact frame the reel locks
+        onEnter: () => setShown(true),
+        onLeaveBack: () => setShown(false),
+        onRefresh: (self) => setShown(self.progress > 0),
+      });
+
+      // absolute positions: measured from the trigger, these would land after the pin's own spacing
+      const rolling = {
+        trigger: root.current,
+        start: () => pinned.start + pause(),
+        end: () => pinned.start + pause() + distance(),
+        scrub: true,
+        invalidateOnRefresh: true,
+      };
       const reel = gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
         scrollTrigger: {
-          trigger: root.current,
-          start: 'top top',
-          end: () => `+=${distance()}`,
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
-          // visibility rides the pin itself so it flips on the exact frame the reel locks
-          onEnter: () => gsap.set(root.current, { autoAlpha: 1 }),
-          onLeaveBack: () => gsap.set(root.current, { autoAlpha: 0 }),
-          onRefresh: (self) => gsap.set(root.current, { autoAlpha: self.progress > 0 ? 1 : 0 }),
+          ...rolling,
+          id: 'reel',
           onUpdate: (self) => gsap.set(q('[data-progress]'), { scaleX: self.progress }),
         },
       });
 
       // sprocket strips run against the reel for extra parallax
-      gsap.fromTo(
-        q('[data-sprockets]'),
-        { xPercent: 0 },
-        { xPercent: -30, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: () => `+=${distance()}`, scrub: true, invalidateOnRefresh: true } },
-      );
+      gsap.fromTo(q('[data-sprockets]'), { xPercent: 0 }, { xPercent: -30, ease: 'none', scrollTrigger: rolling });
 
-      // intro copy develops right after the hand-off frame lands; for the first stretch the copy is
-      // counter-moved against the reel so it holds still while the photo drifts left beneath it
-      const hold = () => innerWidth * 0.45;
+      // the hand-off frame gains its mat while the headline sets, so the hero's print idea carries on
+      const matShadow = (alpha: number) => `0 0 0 1.4svh rgba(244, 239, 230, ${alpha}), 0 4.6svh 0 1.4svh rgba(244, 239, 230, ${alpha})`;
       gsap
-        .timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: () => `+=${hold()}`, scrub: 1, invalidateOnRefresh: true } })
-        .fromTo(q('[data-intro-text]'), { x: 0 }, { x: hold, ease: 'none', duration: 1 }, 0)
-        .fromTo(q('[data-intro] [data-char]'), { yPercent: 150, rotate: 6 }, { yPercent: 0, rotate: 0, stagger: 0.012, ease: 'power3.out', duration: 0.6 }, 0)
-        .fromTo(q('[data-intro-copy], [data-sprockets], [data-chrome]'), { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.4 }, 0.2)
-        .fromTo(q('[data-handoff] img'), { scale: 1 }, { scale: 1.15, ease: 'none', duration: 1 }, 0)
-        .fromTo(q('[data-handoff-dim]'), { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.5 }, 0.1);
+        .timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: () => `+=${pause()}`, scrub: true } })
+        .fromTo(q('[data-intro] [data-char]'), { yPercent: 150, rotate: 6 }, { yPercent: 0, rotate: 0, stagger: 0.012, ease: 'power3.out', duration: 0.6, immediateRender: true }, 0)
+        .fromTo(q('[data-intro-copy], [data-sprockets-wrap], [data-chrome]'), { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.4, immediateRender: true }, 0.2)
+        .fromTo(handoff, { boxShadow: matShadow(0) }, { boxShadow: matShadow(1), ease: 'none', duration: 0.35, immediateRender: true }, 0.05)
+        .fromTo(q('[data-handoff] img'), { scale: 1 }, { scale: 1.06, ease: 'none', duration: 1, immediateRender: true }, 0);
+
+      // keyboard users: bring a focused chapter link into the reel's view
+      const onFocus = (e: FocusEvent) => {
+        const link = e.target as HTMLElement;
+        const chapter = link.closest<HTMLElement>('[data-chapter]');
+        const range = reel.scrollTrigger;
+        if (!chapter || !range || !link.matches(':focus-visible')) return;
+        root.current!.scrollLeft = 0;
+        scrollToY(range.start + Math.min(chapter.offsetLeft, distance()), true);
+      };
+      root.current!.addEventListener('focusin', onFocus);
 
       q('[data-chapter]').forEach((chapter) => {
         const c = gsap.utils.selector(chapter);
@@ -114,15 +135,18 @@ export default function Stories() {
       return () => {
         gsap.ticker.remove(onTick);
         ScrollTrigger.removeEventListener('refreshInit', alignHandoff);
+        root.current?.removeEventListener('focusin', onFocus);
       };
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} id="stories" className="relative z-10 -mt-[100dvh] h-[100dvh] overflow-hidden bg-ink text-ivory">
-      <Sprockets className="absolute left-0 top-3" />
-      <Sprockets className="absolute bottom-3 left-0" />
+    <section ref={root} id="stories" className="relative z-10 -mt-[100svh] h-[100svh] overflow-hidden bg-ink text-ivory">
+      <div data-sprockets-wrap>
+        <Sprockets className="absolute left-0 top-3" />
+        <Sprockets className="absolute bottom-3 left-0" />
+      </div>
 
       <div data-chrome className="absolute inset-x-6 top-20 z-10 flex items-center justify-between text-xs uppercase tracking-[0.2em] sm:inset-x-10">
         <span>(02) — Stories</span>
@@ -133,9 +157,8 @@ export default function Stories() {
       </div>
 
       <div data-track className="flex h-full w-max items-center will-change-transform">
-        <div data-intro className="relative flex h-full w-[100vw] shrink-0 flex-col justify-start px-6 pt-[16dvh] sm:justify-center sm:px-10 sm:pt-0">
-          <div data-intro-text className="relative z-10">
-          <p className="relative z-10 max-w-[60vw] text-[15vw] leading-[0.88] tracking-tight sm:text-[9.5vw]">
+        <div data-intro className="relative flex h-full w-[100vw] shrink-0 flex-col justify-start px-6 pt-[15svh] sm:justify-center sm:px-0 sm:pl-[65vw] sm:pr-10 sm:pt-0">
+          <p className="relative z-10 text-[13vw] leading-[0.92] tracking-tight sm:text-[5.4vw]">
             <span className="block">
               <SplitChars text="Vows," />
             </span>
@@ -146,48 +169,53 @@ export default function Stories() {
               <SplitChars text="frame by frame" />
             </span>
           </p>
-          <p data-intro-copy className="relative z-10 mt-8 max-w-sm text-sm leading-relaxed text-ivory/70">
-            Seven albums from the studio and the teams it shoots with. Every caption, date and heart below is real.
+          <p data-intro-copy className="relative z-10 mt-5 max-w-sm text-sm leading-relaxed text-ivory/70 sm:mt-8">
+            Seven albums from the studio and the teams it shoots with, in their own words.
           </p>
-          </div>
-          <div data-handoff className="absolute right-6 top-[54dvh] h-[34dvh] w-[58vw] overflow-hidden sm:right-[20vw] sm:top-[19dvh] sm:h-[62dvh] sm:w-[34vw]">
+          <div data-handoff className="absolute left-[14vw] top-[45svh] h-[38svh] w-[72vw] overflow-hidden sm:left-[24vw] sm:top-[17svh] sm:h-[62svh] sm:w-[36vw]">
             {/* viewport-sized and offset so its crop matches the hero's full-screen frame exactly */}
             <img src={img(HERO_IMAGE)} alt="A couple embracing at dusk outside a lamplit cottage" className="hero-photo absolute" />
-            <div data-handoff-dim className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/30 to-transparent opacity-0" />
           </div>
+          <p data-intro-copy className="absolute left-[14vw] top-[83svh] flex h-[6svh] w-[72vw] items-center justify-center text-[1.25svh] uppercase tracking-[0.3em] text-ink sm:left-[24vw] sm:top-[79svh] sm:w-[36vw]">
+            Imprint Studio
+          </p>
         </div>
 
         {CHAPTERS.map((ch, i) => (
           <article
             key={ch.title}
             data-chapter
-            className="relative grid h-full w-[100vw] shrink-0 grid-cols-12 items-center gap-4 px-6 sm:px-10"
+            className="relative grid h-full w-[100vw] shrink-0 grid-cols-12 content-center items-center gap-4 px-6 pt-20 sm:content-normal sm:px-10 sm:pt-0"
             style={{ perspective: '1200px' }}
           >
-            <div className="relative col-span-12 row-start-1 h-[48dvh] sm:col-span-5 sm:col-start-2 sm:h-[68dvh]">
+            <div className="relative col-span-12 row-start-1 h-[48svh] sm:col-span-5 sm:col-start-2 sm:h-[68svh]">
               <div data-depth="0.2" className="absolute inset-0">
-                <div data-reveal className="h-full w-full overflow-hidden">
-                  <img data-inner src={img(ch.images[0])} alt={ch.title} className="h-full w-full object-cover" />
+                {/* Each photo is set the way Imprint sets its albums: on an ivory or oxblood mat */}
+                <div data-reveal className={`flex h-full w-full flex-col p-[1.4svh] pb-0 ${i % 2 ? 'bg-oxblood text-ivory' : 'bg-ivory text-ink'}`}>
+                  <div className="min-h-0 flex-1 overflow-hidden">
+                    <img data-inner src={img(ch.images[0])} alt={ch.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                  </div>
+                  <p className="flex h-[4.6svh] shrink-0 items-center justify-center text-[1.25svh] uppercase tracking-[0.3em]">Imprint Studio</p>
                 </div>
               </div>
             </div>
 
-            <div className="pointer-events-none absolute left-[47vw] top-[9dvh] hidden h-[24dvh] w-[13vw] sm:block">
-              <div data-depth="0.9" className="absolute inset-0">
+            <div className="pointer-events-none absolute left-[44vw] top-[14svh] hidden h-[24svh] w-[13vw] sm:block">
+              <div data-depth="0.5" className="absolute inset-0">
                 <div data-reveal className="h-full w-full overflow-hidden">
-                  <img data-inner src={thumb(ch.images[1])} alt="" className="h-full w-full object-cover" decoding="async" />
+                  <img data-inner src={thumb(ch.images[1])} alt="" loading="lazy" className="h-full w-full object-cover" decoding="async" />
                 </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute bottom-[8dvh] right-[5vw] hidden h-[22dvh] w-[13vw] sm:block">
+            <div className="pointer-events-none absolute bottom-[8svh] right-[5vw] hidden h-[22svh] w-[13vw] sm:block">
               <div data-depth="1.6" className="absolute inset-0">
                 <div data-reveal className="h-full w-full overflow-hidden">
-                  <img data-inner src={thumb(ch.images[2])} alt="" className="h-full w-full object-cover" decoding="async" />
+                  <img data-inner src={thumb(ch.images[2])} alt="" loading="lazy" className="h-full w-full object-cover" decoding="async" />
                 </div>
               </div>
             </div>
 
-            <div className="relative z-10 col-span-12 row-start-2 self-start sm:col-span-4 sm:col-start-8 sm:row-start-1 sm:-translate-y-[4dvh] sm:self-center">
+            <div className="relative z-10 col-span-12 row-start-2 self-start sm:col-span-4 sm:col-start-8 sm:row-start-1 sm:-translate-y-[4svh] sm:self-center">
               <p className="mask">
                 <span data-num className="inline-block font-poem text-2xl italic text-brass sm:text-3xl">
                   Chapter {String(i + 1).padStart(2, '0')}

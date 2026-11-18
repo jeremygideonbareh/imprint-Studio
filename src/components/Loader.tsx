@@ -109,7 +109,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
         <div className="absolute inset-0 bg-ink/20" />
       </div>
 
-      <div data-box className="pointer-events-none relative flex h-[46dvh] w-[34dvh] items-center justify-center sm:h-[52dvh] sm:w-[39dvh]">
+      <div data-box className="pointer-events-none relative flex h-[46svh] w-[34svh] items-center justify-center sm:h-[52svh] sm:w-[39svh]">
         {(['left-0 top-0 border-l border-t', 'right-0 top-0 border-r border-t', 'left-0 bottom-0 border-l border-b', 'right-0 bottom-0 border-r border-b'] as const).map(
           (pos) => (
             <span key={pos} data-corner className={`absolute h-6 w-6 -m-3 border-ivory ${pos}`} />

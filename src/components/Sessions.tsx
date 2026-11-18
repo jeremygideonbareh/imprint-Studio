@@ -120,7 +120,7 @@ export default function Sessions() {
                 {s.note}
                 <span className="ml-4 inline-block transition-transform duration-500 group-hover:-rotate-45">→</span>
               </span>
-              <img src={thumb(s.image)} alt="" className="h-20 w-16 shrink-0 object-cover sm:hidden" />
+              <img src={thumb(s.image)} alt="" loading="lazy" className="h-20 w-16 shrink-0 object-cover sm:hidden" />
             </a>
           </li>
         ))}
@@ -135,6 +135,7 @@ export default function Sessions() {
             key={s.name}
             src={thumb(s.image)}
             alt=""
+            loading="lazy"
             className={`absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ${
               active === i ? 'scale-100 opacity-100' : 'scale-125 opacity-0'
             }`}

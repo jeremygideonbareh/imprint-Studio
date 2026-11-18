@@ -24,8 +24,8 @@ const delay = (ms: number) => ({ animationDelay: `${ms}ms` });
 
 function Marquee({ outline = false }: { outline?: boolean }) {
   return (
-    <div className="anim-fade-up absolute inset-x-0 top-[13dvh] overflow-hidden py-[2vh] sm:top-[17dvh]" style={delay(500)}>
-      <div className={`marquee flex w-max whitespace-nowrap text-[15dvh] leading-[1.1] tracking-tight sm:text-[27dvh] ${outline ? 'hero-outline' : 'text-ivory'}`}>
+    <div className="anim-fade-up absolute inset-x-0 top-[13svh] overflow-hidden py-[2vh] sm:top-[17svh]" style={delay(500)}>
+      <div className={`marquee flex w-max whitespace-nowrap text-[15svh] leading-[1.1] tracking-tight sm:text-[27svh] ${outline ? 'hero-outline' : 'text-ivory'}`}>
         <span className="pr-[6vw]">{MARQUEE}&nbsp;</span>
         <span className="pr-[6vw]" aria-hidden="true">
           {MARQUEE}&nbsp;
@@ -55,11 +55,12 @@ export default function Hero() {
   });
 
   return (
-    <section className="hero-root relative h-[100dvh] w-full overflow-hidden">
+    <section className="hero-root relative h-[100svh] w-full overflow-hidden">
+      <h1 className="sr-only">Imprint Studio: wedding photography and films in Shillong</h1>
       <div className="hero-bg anim-fade-in absolute inset-0" aria-hidden="true" />
 
       {/* The name runs behind the print in solid type and across it in outline */}
-      <div data-hero-marquee className="pointer-events-none absolute inset-0 z-10">
+      <div data-hero-marquee className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
         <Marquee />
       </div>
 
@@ -68,8 +69,8 @@ export default function Hero() {
         <div data-hero-print className="hero-print">
           <div data-hero-slot className="hero-slot" />
           <div className="flex h-[var(--cap)] flex-col items-center justify-center text-ink">
-            <p className="text-[1.5dvh] uppercase tracking-[0.34em]">Imprint Studio</p>
-            <p className="mt-[0.5dvh] font-poem text-[1.5dvh] italic text-clay">You were made in His image</p>
+            <p className="text-[1.5svh] uppercase tracking-[0.34em]">Imprint Studio</p>
+            <p className="mt-[0.5svh] font-poem text-[1.5svh] italic text-clay">You were made in His image</p>
           </div>
         </div>
 
@@ -94,25 +95,6 @@ export default function Hero() {
       <div data-hero-outline className="pointer-events-none absolute inset-0 z-20" aria-hidden="true">
         <Marquee outline />
       </div>
-
-      <div
-        data-hero-fade
-        className="anim-line absolute inset-x-6 bottom-[5.5rem] z-10 h-px bg-ivory/50 sm:inset-x-10 sm:bottom-28"
-        style={delay(1200)}
-      />
-
-      <footer data-hero-fade className="absolute inset-x-0 bottom-0 z-30 flex items-end justify-between px-6 pb-5 text-xs leading-relaxed text-ivory sm:px-10 sm:pb-8 sm:text-sm">
-        <div className="anim-fade-up" style={delay(1400)}>
-          <p>Wedding photography &amp; films</p>
-          <p className="text-ivory/65">Capturing your precious moments</p>
-        </div>
-        <div className="anim-fade-up text-right" style={delay(1550)}>
-          <p>15K on Instagram</p>
-          <a href={IG} {...external(IG)} className="text-ivory/65 transition-opacity duration-300 hover:opacity-60">
-            @imprint_studio_shillong
-          </a>
-        </div>
-      </footer>
 
       <header data-hero-fade className="absolute inset-x-0 top-0 z-30 flex items-start justify-between px-6 pt-6 text-ivory sm:px-10 sm:pt-8">
         <a href="#top" className="anim-fade-up font-poem text-2xl italic tracking-wide" style={delay(800)}>
@@ -143,6 +125,28 @@ export default function Hero() {
           </div>
         </div>
       </header>
+
+      <div data-hero-fade className="absolute inset-x-6 bottom-[5.5rem] z-10 sm:inset-x-10 sm:bottom-28">
+        <div className="anim-line h-px bg-ivory/50" style={delay(1200)} />
+      </div>
+
+      <footer data-hero-fade className="absolute inset-x-0 bottom-0 z-30 flex items-end justify-between px-6 pb-5 text-xs leading-relaxed text-ivory sm:px-10 sm:pb-8 sm:text-sm">
+        <div className="anim-fade-up" style={delay(1400)}>
+          <p>Wedding photography &amp; films</p>
+          <p className="text-ivory/65">Capturing your precious moments</p>
+        </div>
+        <div className="anim-fade-up flex items-center gap-8" style={delay(1550)}>
+          <div className="hidden text-right sm:block">
+            <p>15K on Instagram</p>
+            <a href={IG} {...external(IG)} className="text-ivory/65 transition-opacity duration-300 hover:opacity-60">
+              @imprint_studio_shillong
+            </a>
+          </div>
+          <a href="#contact" className="rounded-full bg-ivory px-5 py-3 text-ink transition-colors duration-300 hover:bg-brass">
+            Check your date
+          </a>
+        </div>
+      </footer>
 
       {/* Mobile drawer */}
       <div
@@ -208,10 +212,9 @@ export default function Hero() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         data-hero-fade
-        className="anim-fade-up absolute right-6 top-6 z-50 flex h-10 w-10 items-center justify-center sm:hidden"
-        style={delay(900)}
+        className="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center sm:hidden"
       >
-        <span className="relative block h-4 w-6">
+        <span className="anim-fade-up relative block h-4 w-6" style={delay(900)}>
           <span
             className={`absolute left-0 top-0 h-0.5 w-6 bg-ivory transition-transform duration-500 ${
               open ? 'translate-y-[7px] rotate-45' : ''

@@ -7,6 +7,8 @@ export default function SplitChars({ text, attr = 'data-char' }: { text: string;
   const words = text.split(' ');
   return (
     <>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
       {words.map((word, w) => (
         <span key={w} className="inline-block whitespace-nowrap">
           {word.split('').map((c, i) => (
@@ -19,6 +21,7 @@ export default function SplitChars({ text, attr = 'data-char' }: { text: string;
           {w < words.length - 1 && <span className="inline-block">&nbsp;</span>}
         </span>
       ))}
+      </span>
     </>
   );
 }

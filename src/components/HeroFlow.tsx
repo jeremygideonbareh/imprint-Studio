@@ -52,19 +52,19 @@ export default function HeroFlow() {
           start: 'top top',
           end: '+=260%',
           pin: true,
-          scrub: 1,
+          scrub: true, // Lenis already smooths the scroll; any extra lag would break the hand-off
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
 
-      tl.to(q('[data-hero-fade]'), { autoAlpha: 0, y: -30, duration: 0.1 }, 0)
+      tl.fromTo(q('[data-hero-fade]'), { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -30, duration: 0.1 }, 0)
         .to(q('[data-hero-marquee]'), { yPercent: -18, autoAlpha: 0, duration: 0.16 }, 0)
         .to(q('[data-hero-outline]'), { yPercent: -18, autoAlpha: 0, duration: 0.07 }, 0)
-        // the mat lifts away toward the viewer while its window opens into the full picture
-        .to(q('[data-hero-print], [data-hero-seal]'), { scale: 1.07, autoAlpha: 0, duration: 0.09, ease: 'power2.in' }, 0.05)
-        .fromTo(q('[data-hero-frame]'), { clipPath: slot }, { clipPath: 'inset(0px 0px 0px 0px)', duration: 0.22, ease: 'power2.inOut' }, 0.05)
-        .fromTo(q('[data-hero-frame-img]'), { scale: slotFit }, { scale: 1, duration: 0.22, ease: 'power2.inOut' }, 0.05)
+        // the mat lifts off first, then the bare photograph opens into the full picture
+        .to(q('[data-hero-print], [data-hero-seal]'), { scale: 1.03, autoAlpha: 0, duration: 0.05, ease: 'power2.in' }, 0.03)
+        .fromTo(q('[data-hero-frame]'), { clipPath: slot }, { clipPath: 'inset(0px 0px 0px 0px)', duration: 0.22, ease: 'power2.inOut' }, 0.08)
+        .fromTo(q('[data-hero-frame-img]'), { scale: slotFit }, { scale: 1, duration: 0.22, ease: 'power2.inOut' }, 0.08)
         .to(q('[data-shade]'), { autoAlpha: 0.55, duration: 0.12 }, 0.3)
         .fromTo(q('[data-manifesto]'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.33)
         .fromTo(q('[data-kicker]'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.06 }, 0.34)
@@ -80,13 +80,13 @@ export default function HeroFlow() {
         .fromTo(q('[data-backdrop]'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02 }, 0.8)
         .to(q('[data-hero-frame]'), { clipPath: target, duration: 0.14, ease: 'power3.inOut' }, 0.82)
         .to(q('[data-hero-frame-img]'), { scale: 1, duration: 0.14 }, 0.82)
-        .to({}, { duration: 0.04 }); // hold the matched frame before the reel takes over
+        .to({}, { duration: 0.1 }); // hold the matched frame before the reel takes over
     },
     { scope: root },
   );
 
   return (
-    <div ref={root} id="top" className="relative isolate h-[100dvh] w-full overflow-hidden bg-ink">
+    <div ref={root} id="top" className="relative isolate h-[100svh] w-full overflow-hidden bg-ink">
       <Hero />
 
       <div data-backdrop className="pointer-events-none invisible absolute inset-0 z-[14] bg-ink" />

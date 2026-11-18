@@ -84,15 +84,15 @@ export default function Quiet() {
   const title = 'The quiet between';
 
   return (
-    <section ref={root} id="quiet" className="relative h-[100dvh] overflow-hidden bg-ink text-ivory">
+    <section ref={root} id="quiet" className="relative h-[100svh] overflow-hidden bg-ink text-ivory">
       <div data-glow className="quiet-glow pointer-events-none absolute left-1/2 top-1/2 h-[90vmax] w-[90vmax] -translate-x-1/2 -translate-y-1/2 rounded-full" />
 
       <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: '1600px' }}>
         <div className="relative h-0 w-0" style={{ transformStyle: 'preserve-3d' }}>
           <div data-ring className="absolute left-0 top-0" style={{ transformStyle: 'preserve-3d' }}>
             {QUIET.map((id) => (
-              <div key={id} data-w-item className="absolute left-0 top-0 h-[38dvh] w-[26dvh] overflow-hidden sm:h-[48dvh] sm:w-[33dvh]">
-                <img src={thumb(id)} alt="A quiet wedding-day portrait" className="h-full w-full object-cover" decoding="async" />
+              <div key={id} data-w-item className="absolute left-0 top-0 h-[38svh] w-[26svh] overflow-hidden sm:h-[48svh] sm:w-[33svh]">
+                <img src={thumb(id)} alt="A quiet wedding-day portrait" className="h-full w-full object-cover" loading="lazy" decoding="async" />
                 <div data-w-shade className="absolute inset-0 bg-ink" />
               </div>
             ))}
@@ -101,10 +101,12 @@ export default function Quiet() {
       </div>
 
       <h2 data-w-title className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-center text-[14vw] leading-none tracking-tight sm:text-[10vw]">
-        <SplitChars text={title} attr="data-c" />
+        <span className="block w-full px-6 text-center" style={{ textShadow: '0 4px 30px rgba(20,12,12,.9), 0 0 80px rgba(20,12,12,.7)' }}>
+          <SplitChars text={title} attr="data-c" />
+        </span>
       </h2>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[55dvh] bg-gradient-to-t from-ink via-ink/75 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[55svh] bg-gradient-to-t from-ink via-ink/75 to-transparent" />
       <div className="pointer-events-none absolute inset-x-6 bottom-10 z-20 sm:inset-x-10 sm:bottom-14">
         {QUIET_POEM.map((line) => (
           <p key={line} data-poem className="invisible font-poem text-2xl italic leading-tight text-ivory sm:text-4xl">

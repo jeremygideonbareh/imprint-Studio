@@ -41,6 +41,32 @@ export function startSmoothScroll() {
   };
 }
 
+export function scrollToY(y: number, immediate = false) {
+  if (lenis) lenis.scrollTo(y, { immediate, force: true, duration: 1.8 });
+  else window.scrollTo({ top: y, behavior: immediate || motionOff() ? 'auto' : 'smooth' });
+}
+
+/** In-page links land where each section actually reads, accounting for pin spacing. */
+export function scrollToAnchor(hash: string) {
+  if (hash === '#' || hash === '#top') return scrollToY(0);
+  const reel = hash === '#stories' ? ScrollTrigger.getById('reel') : undefined;
+  if (reel) return scrollToY(reel.start);
+  const el = document.querySelector(hash);
+  if (!el) return;
+  scrollToY((el.closest('.pin-spacer') ?? el).getBoundingClientRect().top + window.scrollY);
+}
+
+/** Pulls below-the-fold images in one at a time once the opening has played. */
+export async function warmLazyImages() {
+  if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
+  const urls = new Set(Array.from(document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]'), (i) => i.src));
+  for (const src of urls) {
+    const image = new Image();
+    image.src = src;
+    await image.decode().catch(() => {});
+  }
+}
+
 /** Scroll velocity in px/frame-ish units, from Lenis when present, otherwise ScrollTrigger. */
 export const scrollVelocity = () => (lenis ? lenis.velocity : ScrollTrigger.getAll()[0]?.getVelocity() / 60 || 0);
 

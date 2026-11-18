@@ -17,11 +17,12 @@ p00_01 p00_03 p02_06 p02_07 p03_01
 p04_01 p04_05 p04_06 p04_08 p04_10 p04_11 p04_12
 p05_01 p05_02 p05_03 p05_05 p05_06 p05_07 p05_11
 p06_04 p06_06 p06_08 p06_10 p06_12 p06_13 p06_14 p06_16 p06_17
-p07_02 p07_04 p07_08 p07_09 p07_14 p07_15
+p07_02 p07_04 p07_09 p07_14 p07_15
 p12_05 p12_07 p12_09 p12_10 p12_12 p12_13 p12_14 p12_15
 p19_02 p19_08 p19_18
 """.split()
-KEEP = 'p00_02 p05_09 p06_05 p06_11 p07_06 p07_11 p19_16'.split()
+KEEP = 'p00_02 p06_11 p07_06 p19_16'.split()
+FULL_SIZE = {'p06_10'}  # the hero photo fills the screen
 
 
 def is_mat(colour):
@@ -62,9 +63,10 @@ def main(out=OUT, max_side=1800):
         im = Image.open(os.path.join(SRC, f'{name}.jpg')).convert('RGB')
         if name in TRIM:
             im = trim(im)
-        im.thumbnail((max_side, max_side), Image.LANCZOS)
+        if name not in FULL_SIZE:
+            im.thumbnail((max_side, max_side), Image.LANCZOS)
         path = os.path.join(out, f'{name}.webp')
-        im.save(path, 'WEBP', quality=80, method=6)
+        im.save(path, 'WEBP', quality=84 if name in FULL_SIZE else 80, method=6)
         total += os.path.getsize(path)
         thumb = im.copy()
         thumb.thumbnail((THUMB_WIDTH, THUMB_WIDTH * 2), Image.LANCZOS)

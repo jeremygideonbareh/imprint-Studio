@@ -15,7 +15,8 @@ body {
 .text-xs,
 .text-sm,
 .text-\[11px\],
-.text-\[1\.5dvh\]:not(.font-poem) {
+.text-\[1\.25svh\],
+.text-\[1\.5svh\]:not(.font-poem) {
   font-family: 'Hanken Grotesk', Helvetica, Arial, sans-serif;
 }
 
@@ -109,21 +110,21 @@ html.lenis body {
 /* The matted print. Every measure is derived here so the CSS clip on the photo lines up with the
    mat's window before any JS runs; HeroFlow then reads the same box from layout. */
 .hero-root {
-  --sh: 56dvh;
-  --pad: 2.4dvh;
-  --cap: 7.6dvh;
+  --sh: 56svh;
+  --pad: 2.4svh;
+  --cap: 7.6svh;
   --sw: calc(var(--sh) * 0.78);
   --pw: calc(var(--sw) + var(--pad) * 2);
   --ph: calc(var(--sh) + var(--pad) + var(--cap));
-  --pt: calc(50% - var(--ph) / 2 + 1.5dvh);
+  --pt: calc(50% - var(--ph) / 2 + 1.5svh);
 }
 
 @media (max-width: 639px) {
   .hero-root {
-    --sh: min(46dvh, 100vw);
+    --sh: min(46svh, 100vw);
     --pad: 14px;
     --cap: 54px;
-    --pt: calc(50% - var(--ph) / 2 + 3dvh);
+    --pt: calc(50% - var(--ph) / 2 + 3svh);
   }
 }
 
@@ -135,7 +136,7 @@ html.lenis body {
   height: var(--ph);
   padding: var(--pad) var(--pad) 0;
   background: #f4efe6;
-  box-shadow: 0 2.5dvh 7dvh rgba(20, 12, 12, 0.5);
+  box-shadow: 0 2.5svh 7svh rgba(20, 12, 12, 0.5);
 }
 
 .hero-slot {
@@ -154,7 +155,7 @@ html.lenis body {
 /* Shared by the hero and the reel's first frame, so the hand-off crops identically */
 .hero-photo {
   width: 100vw;
-  height: 100dvh;
+  height: 100svh;
   max-width: none;
   object-fit: cover;
   object-position: 50% 58%;
@@ -167,11 +168,11 @@ html.lenis body {
 
 .hero-seal {
   position: absolute;
-  left: calc(50% + var(--pw) / 2 - 7.6dvh);
-  top: calc(var(--pt) - 3.4dvh);
-  width: 11dvh;
-  height: 11dvh;
-  font-size: 1.6dvh;
+  left: min(calc(50% + var(--pw) / 2 - 7.6svh), calc(100% - 11svh - 12px));
+  top: calc(var(--pt) - 3.4svh);
+  width: 11svh;
+  height: 11svh;
+  font-size: 1.6svh;
   border-radius: 50%;
   background: #430a10;
   box-shadow: 0 0 0 1px rgba(200, 163, 106, 0.5);
